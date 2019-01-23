@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "lint": "tslint -p ./tsconfig.json -c ./tslint.json"
+  },
+  "dependencies": {
+    "@types/react": "^16.7.20",
+    "react": "^16.7.0",
+    "tslint": "^5.12.1"
+  }
+}

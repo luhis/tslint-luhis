@@ -1,0 +1,14 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "no-any": true,
+        "no-anonymous-components": true
+    },
+    "rulesDirectory": [
+        "../dist"
+    ]
+}

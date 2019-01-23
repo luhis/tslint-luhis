@@ -1,0 +1,20 @@
+{
+  "name": "tslint-luhis",
+  "version": "0.0.0",
+  "description": "Luhis's custom TSLint Rules",
+  "main": "index.js",
+  "author": "Matt McCorry <mccorry@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "files": [
+    "dist/**/*"
+  ]
+}
