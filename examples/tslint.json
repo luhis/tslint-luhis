@@ -6,7 +6,8 @@
     "jsRules": {},
     "rules": {
         "no-any": true,
-        "no-anonymous-components": true
+        "no-anonymous-components": true,
+        "only-arrow-functions": false
     },
     "rulesDirectory": [
         "../dist"
