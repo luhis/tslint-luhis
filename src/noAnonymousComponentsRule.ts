@@ -33,14 +33,42 @@ export class Rule extends Lint.Rules.TypedRule {
     }
 }
 
-const AddErrorIsUnNamedFCE = (ctx: Lint.WalkContext<ReadonlyArray<string>>, tc: ts.TypeChecker, node: ts.Node) => {
-    if (ts.isFunctionLike(node)) {
-        const type = tc.getReturnTypeOfSignature(tc.getTypeAtLocation(node).getCallSignatures()[0]);
-        if (type.symbol.name === "FunctionComponentElement" && node.name === undefined) {
-            ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
-        }
+const GetFix = (exp: ts.Expression | ts.ConciseBody): Lint.Replacement[] => {
+    const componentName = "Component";
+    const cropEnd = Lint.Replacement.deleteText(exp.getEnd(), 1);
+    if (ts.isArrowFunction(exp) && ts.isReturnStatement(exp.parent)) {
+        return [
+            Lint.Replacement.deleteText(exp.parent.getStart(), 6),
+            Lint.Replacement.appendText(exp.getStart(), `const ${componentName} = `),
+            cropEnd,
+            Lint.Replacement.appendText(exp.getEnd(), `;\nreturn ${componentName};`),
+        ];
+    } else {
+        return [
+            Lint.Replacement.appendText(exp.getStart(), `{\nconst ${componentName} = `),
+            cropEnd,
+            Lint.Replacement.appendText(exp.getEnd(), `;\nreturn ${componentName};\n};`),
+        ];
     }
 };
+
+const IsUnNamedFCE =
+    (tc: ts.TypeChecker, node: ts.Expression | ts.ConciseBody) => {
+        if (ts.isFunctionLike(node)) {
+            const type = tc.getReturnTypeOfSignature(tc.getTypeAtLocation(node).getCallSignatures()[0]);
+            if (type.symbol.name === "FunctionComponentElement" && node.name === undefined) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+const AddErrorIsUnNamedFCE =
+    (ctx: Lint.WalkContext<ReadonlyArray<string>>, tc: ts.TypeChecker, node: ts.Expression | ts.ConciseBody) => {
+        if (IsUnNamedFCE(tc, node)) {
+            ctx.addFailureAtNode(node, Rule.FAILURE_STRING, GetFix(node));
+        }
+    };
 
 const walk = (ctx: Lint.WalkContext<ReadonlyArray<string>>, tc: ts.TypeChecker) => {
     const cb = (node: ts.Node): void => {
