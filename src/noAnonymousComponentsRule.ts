@@ -27,7 +27,7 @@ export class Rule extends Lint.Rules.TypedRule {
         return this.applyWithFunction(
             sourceFile,
             walk,
-            ["Promise", ...(this.ruleArguments as ReadonlyArray<string>)],
+            {},
             program.getTypeChecker(),
         );
     }
@@ -64,13 +64,13 @@ const IsUnNamedFCE =
     };
 
 const AddErrorIsUnNamedFCE =
-    (ctx: Lint.WalkContext<ReadonlyArray<string>>, tc: ts.TypeChecker, node: ts.Expression | ts.ConciseBody) => {
+    (ctx: Lint.WalkContext<{}>, tc: ts.TypeChecker, node: ts.Expression | ts.ConciseBody) => {
         if (IsUnNamedFCE(tc, node)) {
             ctx.addFailureAtNode(node, Rule.FAILURE_STRING, GetFix(node));
         }
     };
 
-const walk = (ctx: Lint.WalkContext<ReadonlyArray<string>>, tc: ts.TypeChecker) => {
+const walk = (ctx: Lint.WalkContext<{}>, tc: ts.TypeChecker) => {
     const cb = (node: ts.Node): void => {
         if (ts.isReturnStatement(node)) {
             const { expression } = node;
